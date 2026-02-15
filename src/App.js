@@ -9,12 +9,7 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
-import {
-  SkipNext,
-  SkipPrevious,
-  PlayArrow,
-  Pause,
-} from "@mui/icons-material";
+import { SkipNext, SkipPrevious, PlayArrow, Pause } from "@mui/icons-material";
 
 const BASE_URL = "http://localhost:8080";
 
@@ -24,7 +19,6 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
 
-  // Fetch all songs from backend
   useEffect(() => {
     fetch(`${BASE_URL}/api/songs`)
       .then((res) => {
@@ -38,14 +32,11 @@ function App() {
       .catch((err) => console.error(err));
   }, []);
 
-  const currentSong =
-    currentSongIndex !== null ? songs[currentSongIndex] : null;
+  const currentSong = currentSongIndex !== null ? songs[currentSongIndex] : null;
 
-  // Helper: get correct music URL
   const getMusicUrl = (song) =>
     song ? `${BASE_URL}/music/${song.fileUrl.split("/").pop()}` : "";
 
-  // Reload audio when song changes
   useEffect(() => {
     if (audioRef.current && currentSong) {
       audioRef.current.load();
@@ -55,7 +46,6 @@ function App() {
     }
   }, [currentSongIndex, currentSong, isPlaying]);
 
-  // Play / Pause control
   useEffect(() => {
     if (!audioRef.current) return;
     if (isPlaying) {
@@ -72,9 +62,7 @@ function App() {
 
   const handlePrevious = () => {
     if (!songs.length) return;
-    setCurrentSongIndex((prev) =>
-      prev === 0 ? songs.length - 1 : prev - 1
-    );
+    setCurrentSongIndex((prev) => (prev === 0 ? songs.length - 1 : prev - 1));
   };
 
   const handlePlayPause = () => {
@@ -82,18 +70,16 @@ function App() {
     setIsPlaying((prev) => !prev);
   };
 
-  const handleSongEnd = () => {
-    handleNext();
-  };
+  const handleSongEnd = () => handleNext();
 
-  // Loading state
   if (!currentSong) {
     return (
       <Box
         sx={{
           p: 4,
-          color: "#fff",
-          backgroundColor: "#121212",
+          backgroundColor: "#000",
+          color: "#0f0",
+          fontFamily: "monospace",
           minHeight: "100vh",
         }}
       >
@@ -108,17 +94,25 @@ function App() {
     <Box
       sx={{
         p: 4,
-        backgroundColor: "#121212",
+        backgroundColor: "#000",
+        color: "#0f0",
+        fontFamily: "monospace",
         minHeight: "100vh",
-        color: "#fff",
       }}
     >
       <Typography variant="h3" gutterBottom align="center">
-        Dhanush Music Player
+        Dhanush's Music Player
       </Typography>
 
       {/* Current Song */}
-      <Card sx={{ mb: 4, backgroundColor: "#1db954", color: "#fff" }}>
+      <Card
+        sx={{
+          mb: 4,
+          backgroundColor: "#111",
+          color: "#0f0",
+          border: "1px solid #0f0",
+        }}
+      >
         <CardContent>
           <Typography variant="h5">{currentSong.title}</Typography>
           <Typography variant="subtitle1">{currentSong.artist}</Typography>
@@ -127,15 +121,27 @@ function App() {
 
       {/* Controls */}
       <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 4 }}>
-        <Button variant="contained" onClick={handlePrevious}>
+        <Button
+          variant="outlined"
+          sx={{ color: "#0f0", borderColor: "#0f0" }}
+          onClick={handlePrevious}
+        >
           <SkipPrevious />
         </Button>
 
-        <Button variant="contained" onClick={handlePlayPause}>
+        <Button
+          variant="outlined"
+          sx={{ color: "#0f0", borderColor: "#0f0" }}
+          onClick={handlePlayPause}
+        >
           {isPlaying ? <Pause /> : <PlayArrow />}
         </Button>
 
-        <Button variant="contained" onClick={handleNext}>
+        <Button
+          variant="outlined"
+          sx={{ color: "#0f0", borderColor: "#0f0" }}
+          onClick={handleNext}
+        >
           <SkipNext />
         </Button>
       </Box>
@@ -149,10 +155,12 @@ function App() {
           <ListItem
             key={song.id}
             sx={{
-              backgroundColor: index === currentSongIndex ? "#1db954" : "#333",
+              backgroundColor: index === currentSongIndex ? "#0f0" : "#111",
+              color: index === currentSongIndex ? "#000" : "#0f0",
               mb: 1,
-              borderRadius: 1,
+              borderRadius: 0,
               cursor: "pointer",
+              fontFamily: "monospace",
             }}
             onClick={() => {
               setCurrentSongIndex(index);
@@ -163,6 +171,7 @@ function App() {
           </ListItem>
         ))}
       </List>
+
       {/* Audio Player */}
       <audio
         ref={audioRef}
@@ -170,6 +179,12 @@ function App() {
         onEnded={handleSongEnd}
         controls
         autoPlay={isPlaying}
+        style={{
+          width: "100%",
+          marginTop: "20px",
+          backgroundColor: "#000",
+          color: "#0f0",
+        }}
       />
     </Box>
   );
